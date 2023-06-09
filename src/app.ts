@@ -31,6 +31,8 @@ class ProjectInput {
         const descriptionValue = this.description.value;
         const mandayValue = this.manday.value;
         console.log(titleValue, descriptionValue, mandayValue);
+        // console.log(titleValue.length);
+        // console.log(titleValue.trim().length);
     }
 
     private submitHandler() {
@@ -38,4 +40,38 @@ class ProjectInput {
     }
 }
 
+class ProjectList {
+    templeteElement: HTMLTemplateElement;
+    mainElement: HTMLDivElement;
+    element: HTMLElement;
+
+    constructor(status: 'active' | 'finished') {
+        this.templeteElement = document.getElementById("project-list")! as HTMLTemplateElement;
+        this.mainElement = document.getElementById("app")! as HTMLDivElement;
+        const sectionElement = document.importNode(this.templeteElement.content, true);
+        this.element = sectionElement.firstElementChild as HTMLElement;
+
+        //this.element.querySelector("h2")!.innerHTML =  this.status === 'active'? "進行中プロジェクト":"完了したプロジェクト"; 
+
+        this.attach();
+        this.renderContents(status);
+    }
+
+    private attach() {
+        this.mainElement.insertAdjacentElement('beforeend', this.element);
+    }
+    
+    private renderContents(status: 'active' | 'finished') {
+        this.element.querySelector("ul")!.id = `${status}-project`;
+
+        if(status === 'active') {
+            this.element.querySelector("h2")!.innerHTML = "進行中プロジェクト";
+        }else{
+            this.element.querySelector("h2")!.innerHTML = "完了済プロジェクト";
+        }
+    }
+}
+
 const input = new ProjectInput();
+const activeList = new ProjectList('active');
+const finisshedList = new ProjectList('finished');
