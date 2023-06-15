@@ -5,10 +5,11 @@ class ProjectInput {
         this.mainElement = document.getElementById("app");
         const inputElement = document.importNode(this.templeteElement.content, true);
         this.element = inputElement.firstElementChild;
+        this.attach();
         this.title = document.getElementById("title");
         this.description = document.getElementById("description");
         this.manday = document.getElementById("manday");
-        this.attach();
+        this.projectObject = [];
         this.submitHandler();
     }
     attach() {
@@ -19,10 +20,14 @@ class ProjectInput {
         const titleValue = this.title.value;
         const descriptionValue = this.description.value;
         const mandayValue = this.manday.value;
-        console.log(titleValue, descriptionValue, mandayValue);
+        const project = { title: titleValue, description: descriptionValue, manday: mandayValue };
+        console.log("project:" + project);
+        this.projectObject.push(project);
+        console.log(this.projectObject);
+        console.log(this.projectObject.length);
     }
     submitHandler() {
-        this.element.addEventListener("submit", this.getInputInfo);
+        this.element.addEventListener("submit", this.getInputInfo.bind(this));
     }
 }
 class ProjectList {

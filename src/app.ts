@@ -1,3 +1,9 @@
+interface Project {
+    title: string;
+    description: string,
+    manday: string
+}
+
 class ProjectInput {
     templeteElement: HTMLTemplateElement;
     mainElement: HTMLDivElement;
@@ -5,6 +11,7 @@ class ProjectInput {
     title: HTMLInputElement;
     description: HTMLTextAreaElement;
     manday: HTMLInputElement;
+    projectObject:Project[];
 
     constructor() {
         this.templeteElement = document.getElementById("project-input")! as HTMLTemplateElement;
@@ -12,12 +19,13 @@ class ProjectInput {
         const inputElement = document.importNode(this.templeteElement.content, true)
         this.element = inputElement.firstElementChild! as HTMLFormElement;
 
+        this.attach();
+
         this.title = document.getElementById("title")! as HTMLInputElement;
         this.description = document.getElementById("description")! as HTMLTextAreaElement;
         this.manday = document.getElementById("manday")! as HTMLInputElement;
+        this.projectObject = [];
 
-
-        this.attach();
         this.submitHandler()
     }
 
@@ -30,13 +38,16 @@ class ProjectInput {
         const titleValue = this.title.value;
         const descriptionValue = this.description.value;
         const mandayValue = this.manday.value;
-        console.log(titleValue, descriptionValue, mandayValue);
-        // console.log(titleValue.length);
-        // console.log(titleValue.trim().length);
+
+        const project: Project = {title: titleValue, description: descriptionValue, manday: mandayValue};
+        console.log("project:"+ project);
+        this.projectObject.push(project);
+        console.log(this.projectObject);
+        console.log(this.projectObject.length)
     }
 
     private submitHandler() {
-        this.element.addEventListener("submit", this.getInputInfo);
+        this.element.addEventListener("submit", this.getInputInfo.bind(this));
     }
 }
 
@@ -50,8 +61,6 @@ class ProjectList {
         this.mainElement = document.getElementById("app")! as HTMLDivElement;
         const sectionElement = document.importNode(this.templeteElement.content, true);
         this.element = sectionElement.firstElementChild as HTMLElement;
-
-        //this.element.querySelector("h2")!.innerHTML =  this.status === 'active'? "進行中プロジェクト":"完了したプロジェクト"; 
 
         this.attach();
         this.renderContents(status);
@@ -75,3 +84,4 @@ class ProjectList {
 const input = new ProjectInput();
 const activeList = new ProjectList('active');
 const finisshedList = new ProjectList('finished');
+
