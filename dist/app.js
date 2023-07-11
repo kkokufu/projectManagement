@@ -1,4 +1,17 @@
 "use strict";
+var ProjectStatus;
+(function (ProjectStatus) {
+    ProjectStatus[ProjectStatus["Active"] = 0] = "Active";
+    ProjectStatus[ProjectStatus["Finished"] = 1] = "Finished";
+})(ProjectStatus || (ProjectStatus = {}));
+class Project {
+    constructor(title, description, manday, status) {
+        this.title = title;
+        this.description = description;
+        this.manday = manday;
+        this.status = status;
+    }
+}
 class ProjectState {
     constructor() {
         this.projects = [];
@@ -12,11 +25,7 @@ class ProjectState {
         return this.instance;
     }
     addProject(title, description, manday) {
-        const newProject = {
-            title: title,
-            description: description,
-            manday: manday,
-        };
+        const newProject = new Project(title, description, manday, ProjectStatus.Active);
         this.projects.push(newProject);
         for (const listenerFunction of this.listeners) {
             listenerFunction(this.projects.slice());
@@ -62,7 +71,13 @@ class ProjectList {
         this.element = sectionElement.firstElementChild;
         this.assignedProjects = [];
         projectState.addListener((projects) => {
-            this.assignedProjects = projects;
+            const relevantProjects = projects.filter(prj => {
+                if (this.status === 'active') {
+                    return prj.status === ProjectStatus.Active;
+                }
+                return prj.status === ProjectStatus.Finished;
+            });
+            this.assignedProjects = relevantProjects;
             this.renderProjects();
         });
         this.attach();
@@ -81,6 +96,7 @@ class ProjectList {
         }
     }
     renderProjects() {
+        document.getElementById(`${this.status}-project`).innerHTML = "";
         const projects = this.assignedProjects;
         for (const project of projects) {
             const listItem = document.createElement('li');
