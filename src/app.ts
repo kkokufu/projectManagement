@@ -1,7 +1,33 @@
+class ProjectState {
+    private projects: any[] = [];
+    private static instance: ProjectState;
+  
+    private constructor() {}
+  
+    static getInstance() {
+      if (this.instance) {
+        return this.instance;
+      }
+      this.instance = new ProjectState();
+      return this.instance;
+    }
+  
+    addProject(title: string, description: string, manday: number) {
+      const newProject = {
+        title: title,
+        description: description,
+        manday: manday,
+      };
+      this.projects.push(newProject);
+    }
+  }
+  
+const projectState = ProjectState.getInstance();
+
 interface Project {
-    title: string;
+    title: string,
     description: string,
-    manday: string
+    manday: number
 }
 
 class ProjectInput {
@@ -11,7 +37,6 @@ class ProjectInput {
     title: HTMLInputElement;
     description: HTMLTextAreaElement;
     manday: HTMLInputElement;
-    projectObject:Project[];
 
     constructor() {
         this.templeteElement = document.getElementById("project-input")! as HTMLTemplateElement;
@@ -24,7 +49,6 @@ class ProjectInput {
         this.title = document.getElementById("title")! as HTMLInputElement;
         this.description = document.getElementById("description")! as HTMLTextAreaElement;
         this.manday = document.getElementById("manday")! as HTMLInputElement;
-        this.projectObject = [];
 
         this.submitHandler()
     }
@@ -37,11 +61,9 @@ class ProjectInput {
         event.preventDefault();
         const titleValue = this.title.value;
         const descriptionValue = this.description.value;
-        const mandayValue = this.manday.value;
+        const mandayValue = Number(this.manday.value);
 
-        const project: Project = {title: titleValue, description: descriptionValue, manday: mandayValue};
-        this.projectObject.push(project);
-        activeList.renderProjects();
+        projectState.addProject(titleValue, descriptionValue, mandayValue);
         
     }
 
@@ -79,16 +101,16 @@ class ProjectList {
         }
     }
 
-    renderProjects() {
-        console.log(input.projectObject);
-        let projects = input.projectObject;
-        for (const project of projects) {
-            const listItem = document.createElement('li');
-            listItem.textContent = project.title;
-            document.getElementById("active-project")!.appendChild(listItem);
-            console.log(listItem.textContent);
-        }
-    }
+    // renderProjects() {
+    //     console.log(input.projectObject);
+    //     let projects = input.projectObject;
+    //     for (const project of projects) {
+    //         const listItem = document.createElement('li');
+    //         listItem.textContent = project.title;
+    //         document.getElementById("active-project")!.appendChild(listItem);
+    //         console.log(listItem.textContent);
+    //     }
+    // }
 }
 
 const input = new ProjectInput();

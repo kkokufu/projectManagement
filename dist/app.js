@@ -1,4 +1,25 @@
 "use strict";
+class ProjectState {
+    constructor() {
+        this.projects = [];
+    }
+    static getInstance() {
+        if (this.instance) {
+            return this.instance;
+        }
+        this.instance = new ProjectState();
+        return this.instance;
+    }
+    addProject(title, description, manday) {
+        const newProject = {
+            title: title,
+            description: description,
+            manday: manday,
+        };
+        this.projects.push(newProject);
+    }
+}
+const projectState = ProjectState.getInstance();
 class ProjectInput {
     constructor() {
         this.templeteElement = document.getElementById("project-input");
@@ -9,7 +30,6 @@ class ProjectInput {
         this.title = document.getElementById("title");
         this.description = document.getElementById("description");
         this.manday = document.getElementById("manday");
-        this.projectObject = [];
         this.submitHandler();
     }
     attach() {
@@ -19,10 +39,8 @@ class ProjectInput {
         event.preventDefault();
         const titleValue = this.title.value;
         const descriptionValue = this.description.value;
-        const mandayValue = this.manday.value;
-        const project = { title: titleValue, description: descriptionValue, manday: mandayValue };
-        this.projectObject.push(project);
-        activeList.renderProjects();
+        const mandayValue = Number(this.manday.value);
+        projectState.addProject(titleValue, descriptionValue, mandayValue);
     }
     submitHandler() {
         this.element.addEventListener("submit", this.getInputInfo.bind(this));
@@ -47,16 +65,6 @@ class ProjectList {
         }
         else {
             this.element.querySelector("h2").innerHTML = "完了済プロジェクト";
-        }
-    }
-    renderProjects() {
-        console.log(input.projectObject);
-        let projects = input.projectObject;
-        for (const project of projects) {
-            const listItem = document.createElement('li');
-            listItem.textContent = project.title;
-            document.getElementById("active-project").appendChild(listItem);
-            console.log(listItem.textContent);
         }
     }
 }
