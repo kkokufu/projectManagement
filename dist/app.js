@@ -21,10 +21,8 @@ class ProjectInput {
         const descriptionValue = this.description.value;
         const mandayValue = this.manday.value;
         const project = { title: titleValue, description: descriptionValue, manday: mandayValue };
-        console.log("project:" + project);
         this.projectObject.push(project);
-        console.log(this.projectObject);
-        console.log(this.projectObject.length);
+        activeList.renderProjects();
     }
     submitHandler() {
         this.element.addEventListener("submit", this.getInputInfo.bind(this));
@@ -49,6 +47,16 @@ class ProjectList {
         }
         else {
             this.element.querySelector("h2").innerHTML = "完了済プロジェクト";
+        }
+    }
+    renderProjects() {
+        console.log(input.projectObject);
+        let projects = input.projectObject;
+        for (const project of projects) {
+            const listItem = document.createElement('li');
+            listItem.textContent = project.title;
+            document.getElementById("active-project").appendChild(listItem);
+            console.log(listItem.textContent);
         }
     }
 }
