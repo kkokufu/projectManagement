@@ -1,5 +1,6 @@
 class ProjectState {
     private projects: any[] = [];
+    private listeners: any[] = [];
     private static instance: ProjectState;
   
     private constructor() {}
@@ -19,7 +20,14 @@ class ProjectState {
         manday: manday,
       };
       this.projects.push(newProject);
+      for (const listenerFunction of this.listeners) {
+        listenerFunction(this.projects.slice());
+      }
     }
+
+    addListener(listenerFunction: Function) {
+        this.listeners.push(listenerFunction);
+      }
   }
   
 const projectState = ProjectState.getInstance();
@@ -76,12 +84,19 @@ class ProjectList {
     templeteElement: HTMLTemplateElement;
     mainElement: HTMLDivElement;
     element: HTMLElement;
+    assignedProjects : any[];
 
-    constructor(status: 'active' | 'finished') {
+    constructor(private status: 'active' | 'finished') {
         this.templeteElement = document.getElementById("project-list")! as HTMLTemplateElement;
         this.mainElement = document.getElementById("app")! as HTMLDivElement;
         const sectionElement = document.importNode(this.templeteElement.content, true);
         this.element = sectionElement.firstElementChild as HTMLElement;
+        this.assignedProjects = [];
+
+        projectState.addListener((projects: any[]) => {
+            this.assignedProjects = projects;
+            this.renderProjects();
+          });
 
         this.attach();
         this.renderContents(status);        
@@ -101,16 +116,14 @@ class ProjectList {
         }
     }
 
-    // renderProjects() {
-    //     console.log(input.projectObject);
-    //     let projects = input.projectObject;
-    //     for (const project of projects) {
-    //         const listItem = document.createElement('li');
-    //         listItem.textContent = project.title;
-    //         document.getElementById("active-project")!.appendChild(listItem);
-    //         console.log(listItem.textContent);
-    //     }
-    // }
+    renderProjects() {
+        const projects = this.assignedProjects;
+        for (const project of projects) {
+            const listItem = document.createElement('li');
+            listItem.textContent = project.title;
+            document.getElementById(`${this.status}-project`)!.appendChild(listItem);
+        }
+    }
 }
 
 const input = new ProjectInput();

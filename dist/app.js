@@ -2,6 +2,7 @@
 class ProjectState {
     constructor() {
         this.projects = [];
+        this.listeners = [];
     }
     static getInstance() {
         if (this.instance) {
@@ -17,6 +18,12 @@ class ProjectState {
             manday: manday,
         };
         this.projects.push(newProject);
+        for (const listenerFunction of this.listeners) {
+            listenerFunction(this.projects.slice());
+        }
+    }
+    addListener(listenerFunction) {
+        this.listeners.push(listenerFunction);
     }
 }
 const projectState = ProjectState.getInstance();
@@ -48,10 +55,16 @@ class ProjectInput {
 }
 class ProjectList {
     constructor(status) {
+        this.status = status;
         this.templeteElement = document.getElementById("project-list");
         this.mainElement = document.getElementById("app");
         const sectionElement = document.importNode(this.templeteElement.content, true);
         this.element = sectionElement.firstElementChild;
+        this.assignedProjects = [];
+        projectState.addListener((projects) => {
+            this.assignedProjects = projects;
+            this.renderProjects();
+        });
         this.attach();
         this.renderContents(status);
     }
@@ -65,6 +78,14 @@ class ProjectList {
         }
         else {
             this.element.querySelector("h2").innerHTML = "完了済プロジェクト";
+        }
+    }
+    renderProjects() {
+        const projects = this.assignedProjects;
+        for (const project of projects) {
+            const listItem = document.createElement('li');
+            listItem.textContent = project.title;
+            document.getElementById(`${this.status}-project`).appendChild(listItem);
         }
     }
 }
