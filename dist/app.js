@@ -36,6 +36,18 @@ class ProjectState {
     }
 }
 const projectState = ProjectState.getInstance();
+class component {
+    constructor(templeteId, mainId, insertPlace) {
+        this.templeteElement = document.getElementById(templeteId);
+        this.mainElement = document.getElementById(mainId);
+        const inputElement = document.importNode(this.templeteElement.content, true);
+        this.element = inputElement.firstElementChild;
+        this.attach(insertPlace);
+    }
+    attach(insertSpot) {
+        this.mainElement.insertAdjacentElement(insertSpot ? 'afterbegin' : 'beforeend', this.element);
+    }
+}
 class ProjectInput {
     constructor() {
         this.templeteElement = document.getElementById("project-input");
