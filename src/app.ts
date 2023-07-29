@@ -55,6 +55,25 @@ interface Project {
     manday: number
 }
 
+abstract class component<T extends HTMLElement,U extends HTMLElement>{
+    templeteElement: HTMLTemplateElement;
+    mainElement: T;
+    element: U;
+
+    constructor(templeteId: string, mainId: string, insertPlace: boolean) {
+        this.templeteElement = document.getElementById(templeteId)! as HTMLTemplateElement;
+        this.mainElement = document.getElementById(mainId)! as T;
+        const inputElement = document.importNode(this.templeteElement.content, true)
+        this.element = inputElement.firstElementChild! as U;
+
+        this.attach(insertPlace)
+    }
+    
+    private attach(insertSpot:boolean){
+        this.mainElement.insertAdjacentElement(insertSpot?'afterbegin':'beforeend', this.element);
+    }
+}
+
 class ProjectInput {
     templeteElement: HTMLTemplateElement;
     mainElement: HTMLDivElement;
