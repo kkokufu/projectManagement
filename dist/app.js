@@ -48,6 +48,13 @@ class component {
         this.mainElement.insertAdjacentElement(insertSpot ? 'afterbegin' : 'beforeend', this.element);
     }
 }
+class ProjectItem extends component {
+    constructor(id, item) {
+        super("single-project", id, false);
+        this.element.querySelector("h3").textContent = item.title;
+        this.element.querySelector("p").textContent = item.description;
+    }
+}
 class ProjectInput extends component {
     constructor() {
         super("project-input", "app", true);
@@ -94,12 +101,11 @@ class ProjectList extends component {
         }
     }
     renderProjects() {
-        document.getElementById(`${this.status}-project`).innerHTML = "";
+        const mainEl = document.getElementById(`${this.status}-project`);
+        mainEl.innerText = "";
         const projects = this.assignedProjects;
         for (const project of projects) {
-            const listItem = document.createElement('li');
-            listItem.textContent = project.title;
-            document.getElementById(`${this.status}-project`).appendChild(listItem);
+            new ProjectItem(mainEl.id, project);
         }
     }
 }
