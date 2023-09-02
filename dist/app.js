@@ -53,7 +53,11 @@ class ProjectItem extends component {
         super("single-project", id, false);
         this.element.querySelector("h3").textContent = item.title;
         this.element.querySelector("p").textContent = item.description;
+        this.element.addEventListener('dragstart', this.dragStart.bind(this));
+        this.element.addEventListener("dragend", this.dragEnd.bind(this));
     }
+    dragStart(_) { }
+    dragEnd(_) { }
 }
 class ProjectInput extends component {
     constructor() {
