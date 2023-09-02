@@ -74,12 +74,24 @@ abstract class component<T extends HTMLElement,U extends HTMLElement>{
     }
 }
 
-class ProjectItem extends component<HTMLUListElement, HTMLLIElement> {
+interface Draggable {
+    dragStart(event:DragEvent):void
+    dragEnd(event:DragEvent):void
+}
+
+class ProjectItem extends component<HTMLUListElement, HTMLLIElement> implements Draggable{
     constructor(id: string, item:Project) {
         super("single-project", id, false)
         this.element.querySelector("h3")!.textContent = item.title;
         this.element.querySelector("p")!.textContent = item.description;
+
+        this.element.addEventListener('dragstart', this.dragStart);
+        this.element.addEventListener("dragend", this.dragEnd.bind(this));
     }
+
+    dragStart(_:DragEvent) {}
+    dragEnd(_:DragEvent) {}
+
 }
 
 class ProjectInput extends component<HTMLDivElement, HTMLFormElement> {
@@ -156,4 +168,3 @@ class ProjectList extends component<HTMLDivElement, HTMLElement>{
 const input = new ProjectInput();
 const activeList = new ProjectList('active');
 const finisshedList = new ProjectList('finished');
-
